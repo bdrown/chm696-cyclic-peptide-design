@@ -1,0 +1,19 @@
+[
+  {
+    "name": "mdm2_cyclic_binder",
+    "ref_file": "./inputs/1ycr.pdb",
+    "chains": [
+      {
+        "chain_type": "proteinChain",
+        "sequence": "8-12",
+        "if_cyc": "true"
+      },
+      {
+        "chain_type": "proteinChain",
+        "sequence": "A/17-125"
+      }
+    ],
+    "hotspot": "A/54,A/57,A/58,A/61,A/62,A/67,A/72,A/93,A/96,A/99,A/100,A/103",
+    "center_method": "hotspot_center"
+  }
+]
