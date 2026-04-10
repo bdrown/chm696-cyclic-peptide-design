@@ -28,7 +28,7 @@
 #SBATCH --output=%x-%J-%u.out
 #SBATCH --error=%x-%J-%u.err
 #SBATCH --mail-type=BEGIN,END,FAIL
-#SBATCH --mail-user=bsdrown@purdue.edu
+#SBATCH --mail-user=${USER}@purdue.edu
 
 set -euo pipefail
 
