@@ -1,0 +1,160 @@
+# =====================================================================
+# .gitignore for chm696-cyclic-peptide-design
+# =====================================================================
+# Ignores SLURM job output files, Python build artifacts, editor cruft,
+# and any pipeline outputs that might accidentally get created inside
+# the repository directory instead of in $SCRATCH.
+# =====================================================================
+
+# ---------------------------------------------------------------------
+# SLURM job output files
+# ---------------------------------------------------------------------
+# Each sbatch job writes <jobname>-<jobid>-<user>.{out,err} files into
+# whichever directory the user ran sbatch from. If students submit
+# from inside a stage directory, these files land in the repo.
+*.out
+*.err
+slurm-*.out
+slurm-*.err
+
+# ---------------------------------------------------------------------
+# Python build artifacts
+# ---------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# ---------------------------------------------------------------------
+# Virtual environments (shouldn't be in the repo but just in case)
+# ---------------------------------------------------------------------
+venv/
+env/
+ENV/
+.venv/
+.conda/
+
+# ---------------------------------------------------------------------
+# Jupyter notebooks and checkpoints
+# ---------------------------------------------------------------------
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# ---------------------------------------------------------------------
+# Editor and IDE files
+# ---------------------------------------------------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ---------------------------------------------------------------------
+# Pipeline outputs
+# ---------------------------------------------------------------------
+# These are all supposed to live in $SCRATCH, but protect against
+# accidental creation inside the repo (e.g., if a student runs a
+# Python script from inside a stage directory without specifying
+# --output-dir).
+
+# Molecular structure and trajectory files
+*.cif
+*.pdb
+*.prmtop
+*.inpcrd
+*.rst7
+*.nc
+*.dcd
+*.xtc
+*.trr
+
+# tLeap outputs
+leap.log
+tleap.log
+*.leap
+*_clean.pdb
+*_raw.pdb
+*_renum.txt
+*_nonprot.pdb
+*_water.pdb
+*_sslink
+reference.frc
+
+# MMPBSA.py outputs
+mmgbsa.dat
+mmgbsa.csv
+mmgbsa.log
+mmgbsa.in
+_MMPBSA_*
+reference.frc
+
+# OpenMM MD logs and outputs
+minimize.log
+md.log
+production.*
+
+# Boltz outputs
+boltz_results_*/
+predictions/
+
+# ODesign outputs
+odesign_outputs/
+
+# Analysis outputs
+results.tsv
+*.png
+
+# But keep example figures if they're explicitly placed in example_results/
+!example_results/**/*.png
+!example_results/**/*.md
+!example_results/**/*.tsv
+!docs/figures/*.png
+!docs/figures/*.svg
+
+# ---------------------------------------------------------------------
+# Large data files
+# ---------------------------------------------------------------------
+*.h5
+*.hdf5
+*.npy
+*.npz
+*.pkl
+*.pickle
+
+# ---------------------------------------------------------------------
+# Secrets and credentials (shouldn't exist but never commit these)
+# ---------------------------------------------------------------------
+.env
+.env.local
+*.pem
+*.key
+
+# ---------------------------------------------------------------------
+# OS-specific junk
+# ---------------------------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
