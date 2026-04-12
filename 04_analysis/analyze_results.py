@@ -151,53 +151,108 @@ def read_mmgbsa_dat(dat_path: Path) -> Optional[dict]:
 
 def read_mmgbsa_per_frame(csv_path: Path) -> Optional[np.ndarray]:
     """
-    Parse mmgbsa.csv to extract per-frame DELTA TOTAL values.
+    Parse mmgbsa.csv to compute per-frame DELTA TOTAL values.
 
-    MMPBSA.py's CSV output is a bit unusual: it has multiple sections
-    separated by blank lines, each with its own header. We want the
-    section labeled "DELTA Energy Terms" which has one row per frame
-    with columns including TOTAL.
+    MMPBSA.py writes the CSV in three sections — Complex Energy Terms,
+    Receptor Energy Terms, Ligand Energy Terms — each preceded by a
+    title line and a column header. There is no standalone DELTA
+    section, so we compute ΔG per frame as:
+
+        ΔG[i] = TOTAL_complex[i] − TOTAL_receptor[i] − TOTAL_ligand[i]
+
+    The layout looks like:
+
+        GENERALIZED BORN:
+        Complex Energy Terms
+        Frame #,BOND,ANGLE,...,TOTAL
+        0,340.16,938.12,...,-2783.55
+        1,400.72,939.13,...,-2759.49
+        ...
+        Receptor Energy Terms
+        Frame #,BOND,ANGLE,...,TOTAL
+        0,...
+        ...
+        Ligand Energy Terms
+        Frame #,BOND,ANGLE,...,TOTAL
+        0,...
+        ...
     """
     if not csv_path.is_file():
         return None
 
-    text = csv_path.read_text()
+    # Parse into three dicts: {frame_index: total_energy}
+    section_totals = {"Complex": {}, "Receptor": {}, "Ligand": {}}
+    current_section = None
+    total_col_idx = None
 
-    # Split into sections on blank lines
-    sections = re.split(r"\n\s*\n", text)
-    delta_section = None
-    for sec in sections:
-        if "DELTA Energy Terms" in sec:
-            delta_section = sec
-            break
-    if delta_section is None:
+    with csv_path.open() as f:
+        for raw in f:
+            line = raw.rstrip()
+            if not line:
+                continue
+
+            # Section title lines
+            if line.startswith("Complex Energy Terms"):
+                current_section = "Complex"
+                total_col_idx = None
+                continue
+            if line.startswith("Receptor Energy Terms"):
+                current_section = "Receptor"
+                total_col_idx = None
+                continue
+            if line.startswith("Ligand Energy Terms"):
+                current_section = "Ligand"
+                total_col_idx = None
+                continue
+
+            if current_section is None:
+                # Still in preamble (e.g., "GENERALIZED BORN:")
+                continue
+
+            # Column header — first non-numeric line after a section title
+            if line.startswith("Frame"):
+                cols = [c.strip() for c in line.split(",")]
+                try:
+                    total_col_idx = cols.index("TOTAL")
+                except ValueError:
+                    total_col_idx = None
+                continue
+
+            if total_col_idx is None:
+                continue
+
+            # Data row — leading column is frame index, TOTAL is at total_col_idx
+            parts = line.split(",")
+            if len(parts) <= total_col_idx:
+                continue
+            try:
+                frame_idx = int(parts[0])
+                total = float(parts[total_col_idx])
+            except ValueError:
+                continue
+            section_totals[current_section][frame_idx] = total
+
+    if not (section_totals["Complex"]
+            and section_totals["Receptor"]
+            and section_totals["Ligand"]):
         return None
 
-    # Find the header line and data lines
-    lines = [l for l in delta_section.splitlines() if l.strip()]
-    # First line is "DELTA Energy Terms"
-    # Second line is the column header
-    # Remaining lines are per-frame data
-    if len(lines) < 3:
+    # Compute ΔG per frame on the intersection of frames present in all three
+    common_frames = sorted(
+        set(section_totals["Complex"])
+        & set(section_totals["Receptor"])
+        & set(section_totals["Ligand"])
+    )
+    if not common_frames:
         return None
 
-    header = lines[1].split(",")
-    try:
-        total_col = header.index("TOTAL")
-    except ValueError:
-        return None
-
-    values = []
-    for line in lines[2:]:
-        parts = line.split(",")
-        if len(parts) <= total_col:
-            continue
-        try:
-            values.append(float(parts[total_col]))
-        except ValueError:
-            continue
-
-    return np.array(values) if values else None
+    deltas = np.array([
+        section_totals["Complex"][i]
+        - section_totals["Receptor"][i]
+        - section_totals["Ligand"][i]
+        for i in common_frames
+    ])
+    return deltas
 
 
 def collect_results(manifest: List[dict],
