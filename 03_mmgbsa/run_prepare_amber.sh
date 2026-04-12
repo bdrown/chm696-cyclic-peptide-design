@@ -22,12 +22,10 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=4G
-#SBATCH --time=00:10:00
+#SBATCH --time=00:05:00
 #SBATCH --job-name prep_amber
 #SBATCH --output=%x-%J-%u.out
 #SBATCH --error=%x-%J-%u.err
-#SBATCH --mail-type=FAIL
-#SBATCH --mail-user=${USER}@purdue.edu
 
 set -euo pipefail
 

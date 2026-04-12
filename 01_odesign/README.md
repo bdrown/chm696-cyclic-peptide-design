@@ -4,16 +4,30 @@ This stage uses [ODesign](https://odesign1.github.io/) to generate candidate cyc
 
 ## Inputs
 
-**`inputs/mdm2_cyclic.json`** — ODesign input specification. The file defines:
+**`1ycr.pdb`** - Structure of MDM2 in complex with transactivation domain of p53
+
+**`mdm2_cyclic.json`** — ODesign input specification. The file defines:
 
 - The target protein (MDM2 residues 17-125, matching the 1YCR crystal structure construct)
 - The cyclic peptide to be designed (length range 8-12 residues, `if_cyc: true`)
 - Hotspot residues on MDM2 defining the binding cleft (the p53 binding site with key residues Leu54, Gly58, Ile61, Met62, Tyr67, Gln72, His73, Val75, Phe91, Val93, His96, Ile99)
 - The `hotspot_center` specification that tells ODesign to focus sampling near these residues
 
-Edit this file if you want to design against a different target or change the peptide length range. The valid length range is tool-dependent; for reference, 8-12 residues is a typical starting point for synthetically accessible head-to-tail cyclic peptides.
+Change these files if you want to design against a different target or change the peptide length range. The valid length range is tool-dependent; for reference, 8-12 residues is a typical starting point for synthetically accessible head-to-tail cyclic peptides.
 
 ## Running the stage
+
+### Copy input files to Scratch
+
+The ODesign script expects that all input files are located on scratch in the `$SCRATCH/odesign/inputs/` directory. Create this directory and copy files over:
+
+```bash
+mkdir -p $SCRATCH/odesign/inputs/
+cp mdm2_cyclic.json $SCRATCH/odesign/inputs/
+cp 1ycr.pdb $SCRATCH/odesign/inputs/
+```
+
+### Run ODesign (GPU queue, 10 minutes)
 
 The ODesign SLURM wrapper takes the input JSON filename (relative to the `inputs/` directory) as its sole argument:
 
@@ -21,9 +35,8 @@ The ODesign SLURM wrapper takes the input JSON filename (relative to the `inputs
 sbatch run_odesign.sh mdm2_cyclic.json
 ```
 
-This submits a GPU job that runs the ODesign container on Scholar. Expected wall time is 10-15 minutes on an A40 GPU. The job runs with 3 seeds × 5 samples per seed = 15 total candidates generated. You can adjust the `SEEDS` and `N_SAMPLE` variables in the SLURM script if you want more or fewer candidates.
+This submits a GPU job that runs the ODesign container on Scholar. Expected wall time is 10 minutes on an A40 GPU. The job runs with 3 seeds × 5 samples per seed = 15 total candidates generated. You can adjust the `SEEDS` and `N_SAMPLE` variables in the SLURM script if you want more or fewer candidates. While the required runtime is reasonably fast, there are limited compute nodes equipped with A40 GPU's, so you may need to wait in line depending on time of day.
 
-You will receive an email when the job completes (or fails). You can also check progress with `squeue -u $USER`.
 
 ## Outputs
 
@@ -56,9 +69,7 @@ If the peptide is floating away from MDM2 or has an unusual backbone geometry, t
 
 ## Infrastructure notes
 
-The ODesign container sits at `/class/bsdrown/apps/odesign/apps/odesign/odesign.sif` on Scholar. The SLURM script binds the container's checkpoint and data directories read-only and its output directory writable. It uses `--cleanenv` and `--writable-tmpfs` to isolate the container from the host environment, which is necessary because host compiler versions conflict with the CUDA 12.1 toolchain baked into the container.
-
-The fastfold layer norm CUDA extension is pre-compiled inside the SIF during the container build, so the first run no longer takes a long time to JIT-compile the extension. If you encounter a runtime error about the extension, the SIF has been rebuilt without pre-compilation and you'll need to provide a writable torch extensions cache directory (this was the case for earlier versions of the pipeline).
+The ODesign container sits at `/class/bsdrown/apps/odesign/odesign.sif` on Scholar. The SLURM script binds the container's checkpoint and data directories read-only and its output directory writable. It uses `--cleanenv` and `--writable-tmpfs` to isolate the container from the host environment, which is necessary because host compiler versions conflict with the CUDA 12.1 toolchain baked into the container.
 
 ## What's next
 

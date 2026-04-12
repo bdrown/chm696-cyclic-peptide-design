@@ -14,18 +14,18 @@ Given a target protein (MDM2 in the example) and a set of binding-site hotspot r
 4. Computes binding free energies from the trajectories using MM-GBSA via AmberTools' MMPBSA.py
 5. Compares the three methods side by side in a summary report with plots
 
-The complete pipeline runs in roughly two hours of wall time on Purdue's Scholar HPC cluster, most of which is spent waiting in queues rather than computing.
+The complete pipeline runs in roughly two hours of wall time on Purdue's Scholar HPC cluster.
 
 ## Prerequisites
 
 You need an account on Scholar with access to the `gpu` partition. The pipeline has been tested with:
 
 - Scholar's `ambertools/25` module (for tLeap, MMPBSA.py, pdb4amber)
-- Scholar's `conda` module (for creating the OpenMM environment)
+- Scholar's `conda` module (for creating the Boltz-2 and OpenMM environments)
 - An A40 GPU (`--constraint=J`) for Boltz-2 and OpenMM jobs
 - The ODesign container at `/class/bsdrown/apps/odesign/odesign.sif`
 
-You do not need to install anything manually. The one-time setup script in `setup/` creates a conda environment with OpenMM and its dependencies; everything else is loaded via Scholar modules or already present on the cluster.
+You do not need to install anything manually. The one-time setup scripts in `00_setup/` creates a conda environment with OpenMM and its dependencies; everything else is loaded via Scholar modules or already present on the cluster.
 
 ## Quick start
 
@@ -39,7 +39,7 @@ cd chm696-cyclic-peptide-design
 
 All pipeline outputs land under your `$SCRATCH` space in conventional subdirectories (`$SCRATCH/odesign`, `$SCRATCH/boltz`, `$SCRATCH/mmgbsa`, `$SCRATCH/results`). You don't need to create these manually; each stage creates its own directories as needed.
 
-Create the two conda environments (one-time, total about 15-20 minutes). See `setup/README.md` for details on what each environment contains and why they are kept separate:
+Create the two conda environments (one-time, total about 10 minutes). See `setup/README.md` for details on what each environment contains and why they are kept separate:
 
 ```bash
 bash 00_setup/setup_boltz.sh
@@ -51,7 +51,9 @@ Then walk through the four stages in order. Each stage has its own README with d
 ```bash
 # Stage 1 — ODesign generation (GPU, ~15 min)
 cd 01_odesign
-sbatch run_odesign.sh inputs/mdm2_cyclic.json
+mkdir -p $SCRATCH/odesign/inputs
+cp mdm2_cyclic.json $SCRATCH/odesign/inputs/
+sbatch run_odesign.sh mdm2_cyclic.json
 cd ..
 
 # Stage 2 — Boltz-2 structure refinement (GPU, ~30 min)

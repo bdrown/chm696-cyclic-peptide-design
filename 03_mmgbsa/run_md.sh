@@ -22,12 +22,10 @@
 #SBATCH --mem=32G
 #SBATCH --gpus-per-node=1
 #SBATCH --constraint=J
-#SBATCH --time=01:00:00
+#SBATCH --time=00:30:00
 #SBATCH --job-name md
 #SBATCH --output=%x-%J-%u.out
 #SBATCH --error=%x-%J-%u.err
-#SBATCH --mail-type=END,FAIL
-#SBATCH --mail-user=${USER}@purdue.edu
 
 set -euo pipefail
 

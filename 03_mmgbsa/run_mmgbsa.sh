@@ -17,12 +17,10 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=16G
-#SBATCH --time=01:00:00
+#SBATCH --time=00:30:00
 #SBATCH --job-name mmgbsa
 #SBATCH --output=%x-%J-%u.out
 #SBATCH --error=%x-%J-%u.err
-#SBATCH --mail-type=END,FAIL
-#SBATCH --mail-user=${USER}@purdue.edu
 
 set -euo pipefail
 

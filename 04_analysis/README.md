@@ -61,27 +61,7 @@ The correlations normalize all three metrics so that "higher is better" — ODes
 
 **`per_frame_delta.png`** — per-frame ΔG vs time, all designs on the same axes. This is the diagnostic plot that reveals trajectory stability problems. A design that dissociated mid-trajectory will show a visible walk from negative ΔG values toward zero; a design that was never bound will hover near zero throughout; stable binders will fluctuate around their mean value.
 
-## Interpreting the results
-
-The correlation structure typically tells an interesting story. With our example dataset:
-
-- **ODesign vs anything**: near-zero correlation. ODesign's "rank" is just generation order, not a confidence ranking, so this is expected and should be discussed in your report — it illustrates that generative ranking and scoring ranking are different things.
-- **Boltz-2 ipTM vs MM-GBSA**: moderate but noisy correlation. These methods often agree on the extremes (bad designs are recognized by both) but can disagree on the middle of the ranking.
-- **The most informative result is disagreement.** If Boltz-2 is confident about a structure but MM-GBSA reports zero binding, that tells you something important about the difference between structural plausibility and thermodynamic stability.
-
 Use the report as the starting point for answering the questions in `docs/problem_set.md`.
-
-## Converting to PDF for submission
-
-The markdown report is designed to be convertible to PDF via pandoc or any markdown-to-PDF tool. On Scholar:
-
-```bash
-# If pandoc is available via module
-ml pandoc 2>/dev/null || true
-pandoc $SCRATCH/results/results.md -o $SCRATCH/results/results.pdf
-
-# Or copy to your local machine and convert with your preferred tool
-```
 
 Include the four PNG figures alongside the PDF when you submit to Gradescope. The figures are at 150 DPI which is appropriate for printing at reasonable sizes.
 

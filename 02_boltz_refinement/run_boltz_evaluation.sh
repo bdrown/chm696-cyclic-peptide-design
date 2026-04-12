@@ -23,12 +23,10 @@
 #SBATCH --mem=96G
 #SBATCH --gpus-per-node=1
 #SBATCH --constraint=J
-#SBATCH --time=01:00:00
+#SBATCH --time=00:30:00
 #SBATCH --job-name boltz_eval
 #SBATCH --output=%x-%J-%u.out
 #SBATCH --error=%x-%J-%u.err
-#SBATCH --mail-type=BEGIN,END,FAIL
-#SBATCH --mail-user=${USER}@purdue.edu
 
 set -euo pipefail
 

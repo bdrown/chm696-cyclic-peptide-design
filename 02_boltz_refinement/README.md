@@ -4,7 +4,7 @@ This stage takes the backbone-only ODesign outputs from Stage 1 and re-predicts 
 
 ## Why re-predict instead of using ODesign's output directly
 
-ODesign is a backbone-only generative model. Its output CIF files contain only Cα, N, C, and O atoms — no side chains, no hydrogens. The MM-GBSA pipeline in Stage 3 cannot work without full atom coordinates. We could in principle ask a lightweight tool like Rosetta to pack side chains onto the ODesign backbone, but Boltz-2 is a better choice for two reasons: it produces a calibrated structural confidence score (ipTM) that gives us a second opinion on binding quality, and its joint prediction of backbone and side chains is likely to be self-consistent in a way that side chain packing onto a fixed backbone is not.
+ODesign is a backbone-only generative model. Its output CIF files contain only Cα, N, C, and O atoms — no side chains, no hydrogens. The MM-GBSA pipeline in Stage 3 cannot work without full atom coordinates. We could in principle ask another tool like Rosetta to pack side chains onto the ODesign backbone, but Boltz-2 is a better choice for two reasons: it produces a calibrated structural confidence score (ipTM) that gives us a second opinion on binding quality, and its joint prediction of backbone and side chains is likely to be self-consistent in a way that side chain packing onto a fixed backbone is not.
 
 Boltz-2 also has an affinity prediction head, but we deliberately do not use it here. The Boltz-2 authors have stated that the affinity head is trained on drug-like small molecules (<50 heavy atoms) and is not reliable for peptidic binders with ~100 heavy atoms. We rely on MM-GBSA in Stage 3 for binding energy estimates instead.
 
@@ -34,7 +34,7 @@ A manifest TSV file is written to `$SCRATCH/boltz/inputs/odesign_eval_manifest.t
 
 **Note**: The manifest is deliberately placed outside the YAML input directory. Boltz-2 processes every file in its input directory and would fail trying to parse the TSV as a prediction input if we placed it alongside the YAMLs.
 
-### Step 2b — Run Boltz-2 (GPU job, ~20-30 minutes)
+### Step 2b — Run Boltz-2 (GPU queue, ~10 minutes)
 
 ```bash
 sbatch run_boltz_evaluation.sh $SCRATCH/boltz/inputs/odesign_eval

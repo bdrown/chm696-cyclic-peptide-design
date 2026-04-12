@@ -32,7 +32,7 @@ bash submit_all_designs.sh \
 
 The script reads the Stage 2 manifest and submits the four-sub-stage pipeline for each of the 5 designs, with SLURM dependencies between sub-stages so that nothing runs until its predecessor succeeds. You will have 20 jobs queued total (4 sub-stages × 5 designs), though at any given time only a few will actually be running.
 
-Expected total wall time: 30-90 minutes depending on queue load. The MMPBSA.py sub-stages run in parallel on CPU once all the MD jobs finish.
+Each design requires about 20 minutes compute time with an expected total wall time: 30-90 minutes depending on queue load. The MMPBSA.py sub-stages run in parallel on CPU once all the MD jobs finish.
 
 ### Option B — run the pipeline for one design
 
@@ -44,7 +44,7 @@ bash submit_design.sh \
     $SCRATCH/mmgbsa/design_01_seed123
 ```
 
-This submits the four sub-stages as a dependency chain for that single design. The idempotence checks run at submission time, so if some sub-stages are already done, only the remaining ones will be submitted — no wasted no-op jobs.
+This submits the four sub-stages as a dependency chain for that single design. The idempotence checks run at submission time, so if some sub-stages are already done, only the remaining ones will be submitted — no wasted jobs.
 
 ### Option C — run each sub-stage manually
 
@@ -76,13 +76,13 @@ Output looks like:
 Design                  Prep    Min     MD      MMGB    DELTA TOTAL (kcal/mol)
 ----------------------  ------  ------  ------  ------  ----------------------
 design_01_seed123        done    done    done    done       -37.79 +/- 0.34
-design_02_seed123        done    done    done    done        -0.10 +/- 0.05
+design_02_seed123        done    done    done    RUN
 design_03_seed123        done    done    done    RUN
 design_04_seed123        done    done    RUN     PEND
 design_05_seed123        done    done    PEND    PEND
 ```
 
-The status reporter consults SLURM's queue to distinguish "currently running" from "failed" (both would otherwise show log files but no completed outputs). You can also pass a single design directory instead of the root:
+You can also pass a single design directory instead of the root:
 
 ```bash
 bash check_status.sh $SCRATCH/mmgbsa/design_01_seed123
@@ -121,23 +121,21 @@ The `mmgbsa.csv` file is consumed by `04_analysis/analyze_results.py` to generat
 
 **Implicit solvent throughout.** Both the MD and the MMPBSA.py scoring use the GB-OBC2 model (`igb=5` in Amber's terminology) with `mbondi2` radii and 0.15 M salt. This is faster than explicit solvent, consistent with the MM-GBSA scoring model (no impedance mismatch between simulation and analysis), and appropriate for a teaching exercise where the goal is relative comparison among candidates rather than publication-quality absolute numbers.
 
-**Single-trajectory MM-GBSA.** We only simulate the complex, and MMPBSA.py slices each complex frame into receptor-only and ligand-only snapshots for the decomposition. Internal energies cancel exactly, which dramatically reduces noise compared to a dual-trajectory approach. The downside is that we ignore any conformational reorganization that the peptide or MDM2 undergo upon binding, but for a small series of related binders this is fine.
+**Single-trajectory MM-GBSA.** We only simulate the complex, and MMPBSA.py slices each complex frame into receptor-only and ligand-only snapshots for the decomposition. Internal energies cancel exactly, which dramatically reduces noise compared to a dual-trajectory approach. The downside is that we ignore any conformational reorganization that the peptide or MDM2 undergo upon binding, but for a small series of related binders this is probably fine.
 
-**Cyclization via sequence-based construction in tLeap.** The subtle technical challenge of this pipeline is that tLeap automatically assigns N-terminal and C-terminal residue patches to the first and last residues of any peptide chain it loads. For a cyclic peptide, these patches introduce the wrong atom types (N3 instead of N, O2/OXT instead of just O) and prevent the ff14SB force field from assigning parameters to the closing bond. Our workaround is to build the peptide from sequence first (`sequence { GLY ALA ... }`) so all residues use internal templates, then snap coordinates from the PDB with `loadpdbusingseq`, then add an explicit `bond pep.N.C pep.1.N` to close the ring. Earlier attempts to use `set pep head none / tail none` failed because "none" is not a valid Atom reference.
-
-**No entropy term.** Normal-mode entropy calculations would multiply the MM-GBSA runtime by roughly 50× and rarely improve rankings for closely related compounds. The literature consensus is that MM-GBSA without entropy is the right default for relative ranking among similar binders. Students should note this limitation in their reports.
+**No entropy term.** Normal-mode entropy calculations would multiply the MM-GBSA runtime by roughly 50× and rarely improve rankings for closely related compounds. The literature consensus is that MM-GBSA without entropy is the right default for relative ranking among similar binders.
 
 **10 ns production trajectories.** This is short by MD standards but adequate for the comparison. Real publication-quality MM-GBSA on similar systems uses 100 ns to 1 μs. We're staying short to fit in a single SLURM job within the course wall-time budget and to produce a deliverable in a week. Students should acknowledge this limitation and reason about its implications (e.g., insufficient sampling of alternative binding poses).
 
 ## Troubleshooting specific to this stage
 
-**tLeap reports "N3-C bond parameter missing"** — this means the sequence-based construction trick didn't apply. Check that the sequence in `prepare_amber.py` is using the internal residue template and that the explicit bond was created.
+**tLeap reports "N3-C bond parameter missing"** — this means the sequence-based construction didn't apply. Check that the sequence in `prepare_amber.py` is using the internal residue template and that the explicit bond was created.
 
 **OpenMM fails with a CUDA error** — usually means another job grabbed your GPU first. Re-submit the minimize or MD sub-stage.
 
 **MMPBSA.py fails with `ModuleNotFoundError: numpy.compat`** — this is the module-load-order conflict documented in `docs/troubleshooting.md`. The fix is already baked into `run_mmgbsa.sh` (we call MMPBSA.py via its absolute path without loading the ambertools module in the conda shell), so this should not happen on a fresh checkout.
 
-**design_02 (or any design) has ΔG near zero** — this is real, not a bug. The peptide dissociated from MDM2 during MD. Verify by loading the first and last frames of `production.nc` in PyMOL. A dissociated peptide is actually an informative negative result and should be discussed in your report.
+**Cyclic peptide design has ΔG near zero** — this is real, not a bug. The peptide may have dissociated from MDM2 during MD. Verify by loading the first and last frames of `production.nc` in PyMOL. A dissociated peptide is actually an informative negative result and should be discussed in your report.
 
 For other issues, see `docs/troubleshooting.md` at the top level.
 

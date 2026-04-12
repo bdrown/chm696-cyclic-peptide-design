@@ -26,7 +26,7 @@
 #SBATCH --mem=96G
 #SBATCH --gpus-per-node=1
 #SBATCH --constraint=J
-#SBATCH --time=02:00:00
+#SBATCH --time=00:30:00
 #SBATCH --job-name odesign
 #SBATCH --output=%x-%J-%u.out
 #SBATCH --error=%x-%J-%u.err
