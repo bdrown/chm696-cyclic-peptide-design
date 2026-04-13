@@ -39,7 +39,7 @@ cd chm696-cyclic-peptide-design
 
 All pipeline outputs land under your `$SCRATCH` space in conventional subdirectories (`$SCRATCH/odesign`, `$SCRATCH/boltz`, `$SCRATCH/mmgbsa`, `$SCRATCH/results`). You don't need to create these manually; each stage creates its own directories as needed.
 
-Create the two conda environments (one-time, total about 10 minutes). See `setup/README.md` for details on what each environment contains and why they are kept separate:
+Create the two conda environments (one-time, total about 10 minutes). See `00_setup/README.md` for details on what each environment contains and why they are kept separate:
 
 ```bash
 bash 00_setup/setup_boltz.sh
@@ -126,7 +126,7 @@ Nothing else in the pipeline is target-specific; the MM-GBSA stage and all plott
 
 If you use this pipeline in a publication or course derivative, please cite the underlying tools:
 
-- **ODesign**: Zhang et al., *ODesign: A World Model for Biomolecular Interaction Design*, 2025
+- **ODesign**: Zhang, O. et al., *ODesign: A World Model for Biomolecular Interaction Design*, 2025
 - **Boltz-2**: Wohlwend et al., *Boltz-2: A biomolecular foundation model*, 2025
 - **AmberTools**: Case et al., *The Amber biomolecular simulation programs*, J. Comput. Chem., 2005
 - **OpenMM**: Eastman et al., *OpenMM 8*, J. Phys. Chem. B, 2023

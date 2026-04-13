@@ -1,0 +1,155 @@
+cff-version: 1.2.0
+title: >-
+  CHM696 Cyclic Peptide Design: A Multi-Method Computational
+  Pipeline for Evaluating Cyclic Peptide Binders to MDM2
+message: >-
+  If you use this pipeline or adapt it for teaching or research,
+  please cite it using the metadata below.
+type: software
+authors:
+  - given-names: Bryon
+    family-names: Drown
+    email: bsdrown@purdue.edu
+    affiliation: >-
+      Department of Chemistry, Purdue University,
+      West Lafayette, IN, USA
+    orcid: 'https://orcid.org/0000-0002-5631-512X'
+repository-code: 'https://github.com/bdrown/chm696-cyclic-peptide-design'
+url: 'https://github.com/bdrown/chm696-cyclic-peptide-design'
+abstract: >-
+  A multi-method computational pipeline for generating and
+  evaluating cyclic peptide binders against a protein target,
+  developed for CHM696 Chemical Biology at Purdue University.
+  The pipeline uses MDM2 as an example target and compares three
+  philosophically different scoring approaches: generative-model
+  ranking (ODesign), ML-based structure prediction with interface
+  confidence scoring (Boltz-2), and physics-based binding free
+  energy calculation via molecular dynamics and MM-GBSA
+  (AmberTools and OpenMM). The pedagogical goal is to expose
+  students to the strengths and limitations of each approach by
+  having them observe method disagreements on real candidate
+  designs.
+keywords:
+  - computational chemistry
+  - drug discovery
+  - molecular dynamics
+  - cyclic peptides
+  - MDM2
+  - protein-peptide interactions
+  - MM-GBSA
+  - AmberTools
+  - OpenMM
+  - Boltz-2
+  - ODesign
+  - chemical biology
+  - education
+  - Purdue University
+license: Apache-2.0
+version: 1.0.0
+date-released: '2026-04-12'
+references:
+  - type: software
+    title: 'Boltz-2: biomolecular foundation model'
+    authors:
+      - family-names: Wohlwend
+        given-names: Jeremy
+      - name: "Boltz-2 authors"
+    url: 'https://github.com/jwohlwend/boltz'
+    year: 2025
+  - type: software
+    title: AmberTools
+    authors:
+      - family-names: Case
+        given-names: David A.
+      - name: "AmberTools developers"
+    url: 'https://ambermd.org/AmberTools.php'
+  - type: software
+    title: OpenMM
+    authors:
+      - family-names: Eastman
+        given-names: Peter
+      - name: "OpenMM developers"
+    url: 'https://openmm.org'
+  - type: article
+    title: "ODesign: A World Model for Biomolecular Interaction Design"
+    authors:
+      - family-names: Zhang
+        given-names: Odin
+      - family-names: Zhang
+        given-names: Xujun
+      - family-names: Lin
+        given-names: Haitao
+      - family-names: Tan
+        given-names: Cheng
+      - family-names: Wang
+        given-names: Qinghan
+      - family-names: Mo
+        given-names: Yuanle
+      - family-names: Feng
+        given-names: Qiantai
+      - family-names: Du
+        given-names: Gang
+      - family-names: Yu
+        given-names: Yuntao
+      - family-names: Jin
+        given-names: Zichang
+      - family-names: You
+        given-names: Ziyi
+      - family-names: Lin
+        given-names: Peicong
+      - family-names: Zhang
+        given-names: Yijie
+      - family-names: Tao
+        given-names: Yuyang
+      - family-names: Chen
+        given-names: Shicheng
+      - family-names: Chen
+        given-names: Jack Xiaoyu
+      - family-names: Hua
+        given-names: Chenqing
+      - family-names: Zhao
+        given-names: Weibo
+      - family-names: Ma
+        given-names: Runze
+      - family-names: Xia
+        given-names: Yunpeng
+      - family-names: Ying
+        given-names: Kejun
+      - family-names: Li
+        given-names: Jun
+      - family-names: Zeng
+        given-names: Yundian
+      - family-names: Lang
+        given-names: Lijun
+      - family-names: Pan
+        given-names: Peichen
+      - family-names: Cao
+        given-names: Hanqun
+      - family-names: Song
+        given-names: Zihao
+      - family-names: Qiang
+        given-names: Bo
+      - family-names: Wang
+        given-names: Jiaqi
+      - family-names: Ji
+        given-names: Pengfei
+      - family-names: Bai
+        given-names: Lei
+      - family-names: Zhang
+        given-names: Jian
+      - family-names: Hsieh
+        given-names: Chang-yu
+      - family-names: Heng
+        given-names: Pheng Ann
+      - family-names: Sun
+        given-names: Siqi
+      - family-names: Hou
+        given-names: Tingjun
+      - family-names: Zheng
+        given-names: Shuangjia
+    year: 2025
+    url: "https://arxiv.org/abs/2510.22304"
+    identifiers:
+      - type: other
+        value: "arXiv:2510.22304"
+        description: arXiv preprint identifier
