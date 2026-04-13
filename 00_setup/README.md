@@ -28,7 +28,7 @@ Before running either setup script:
 From the top-level repository directory:
 
 ```bash
-bash setup/setup_boltz.sh
+bash 00_setup/setup_boltz.sh
 ```
 
 The script takes 10-15 minutes to download and install everything. It does the following:
@@ -49,7 +49,7 @@ The script takes 10-15 minutes to download and install everything. It does the f
 ## Setting up OpenMM
 
 ```bash
-bash setup/setup_openmm.sh
+bash 00_setup/setup_openmm.sh
 ```
 
 This is faster, about 5 minutes. It creates `$SCRATCH/conda/envs/openmm` with:
@@ -100,14 +100,14 @@ Both setup scripts refuse to overwrite an existing environment. If one gets into
 
 ```bash
 rm -rf $SCRATCH/conda/envs/boltz2
-bash setup/setup_boltz.sh
+bash 00_setup/setup_boltz.sh
 ```
 
 Or for OpenMM:
 
 ```bash
 rm -rf $SCRATCH/conda/envs/openmm
-bash setup/setup_openmm.sh
+bash 00_setup/setup_openmm.sh
 ```
 
 ## Troubleshooting

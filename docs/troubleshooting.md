@@ -10,7 +10,7 @@ You need to load the `conda` module first:
 
 ```bash
 ml conda
-bash setup/setup_openmm.sh
+bash 00_setup/setup_openmm.sh
 ```
 
 The setup script does `ml conda` internally, but some older Scholar configurations require it to be loaded in the parent shell as well.
@@ -23,7 +23,7 @@ The last step of setup verifies that OpenMM can see the CUDA platform by listing
 
 ```bash
 rm -rf $SCRATCH/conda/envs/openmm
-bash setup/setup_openmm.sh
+bash 00_setup/setup_openmm.sh
 ```
 
 The setup script refuses to overwrite an existing environment to prevent accidents.
